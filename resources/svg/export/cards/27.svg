@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="41"
+   height="61"
+   id="svg2"
+   version="1.1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <title
+     id="title7376">Mini Playing Card Set</title>
+  <defs
+     id="defs4" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Mini Playing Card Set</dc:title>
+        <dc:date>2012-01-23</dc:date>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Daniel Scott Fowler</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:rights>
+          <cc:Agent>
+            <dc:title>Daniel Scot Fowler</dc:title>
+          </cc:Agent>
+        </dc:rights>
+        <dc:publisher>
+          <cc:Agent>
+            <dc:title>Eye Internet Limited</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:identifier>http://tekeye.biz/download/simple_cards.svg</dc:identifier>
+        <dc:source>http://tekeye.biz/</dc:source>
+        <dc:subject>
+          <rdf:Bag>
+            <rdf:li>playing</rdf:li>
+            <rdf:li>cards</rdf:li>
+            <rdf:li>suits</rdf:li>
+            <rdf:li>diamond</rdf:li>
+            <rdf:li>heart</rdf:li>
+            <rdf:li>club</rdf:li>
+            <rdf:li>spade</rdf:li>
+            <rdf:li>joker</rdf:li>
+          </rdf:Bag>
+        </dc:subject>
+        <dc:description>A set of mini or micro playing cards suitable for the basis of cards for mobile device card games.</dc:description>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     transform="translate(-359.49997,-841.86218)">
+    <g
+       id="g7741">
+      <rect
+         rx="10"
+         ry="12"
+         y="842.36218"
+         x="359.99997"
+         height="60"
+         width="40"
+         id="rect3050-0-6-3"
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <text
+         id="text3013-7"
+         y="866.94836"
+         x="370.65298"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:0%;font-family:Verdana;-inkscape-font-specification:'Verdana Bold';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none"
+         xml:space="preserve"><tspan
+           y="866.94836"
+           x="370.65298"
+           id="tspan3015-8"
+           style="font-size:28px;line-height:1.25">8</tspan></text>
+      <path
+         id="path30-21"
+         d="m 380.26149,897.89963 c -1.72784,-5.85641 -6.40771,-10.23418 -10.24315,-14.89032 -2.01004,-2.35355 -3.91275,-5.40087 -3.06464,-8.54575 0.97912,-3.31419 5.11086,-5.16444 8.47713,-4.072 2.24852,0.66421 4.07047,2.39151 4.93899,4.45636 0.77522,-1.13594 1.38393,-2.4156 2.58375,-3.22116 2.88283,-2.30367 7.73048,-1.95423 10.0143,0.97222 1.68232,2.05708 1.32237,4.92841 0.19264,7.14137 -1.8689,3.83066 -5.27954,6.6637 -7.86153,10.03252 -1.95385,2.43195 -3.71008,5.07868 -4.61914,8.03975 -0.0624,0.14103 -0.30956,0.24999 -0.41835,0.087 z"
+         style="fill:#ff0000;fill-opacity:1" />
+    </g>
+  </g>
+</svg>
