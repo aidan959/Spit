@@ -60,40 +60,52 @@ class Card(Sprite):
         self.surf : pygame.Surface = pygame.image.load(path)
         self.surf.set_colorkey((255, 255, 255))
         self.rect = self.surf.get_rect()
+        
     @property
     def surf(self) -> Surface:
         return self._surf
+
     @surf.setter
     def surf(self, surf):
         self._surf = surf
+
     def flip_up(self):
         self.flipped = True
         self.set_image(self.card_path)
         return self
+
     def flip_down(self):
         self.set_image(Card.flipped_path)
         self.flipped = False
         return self
+
     def s(self) -> str:
         return f"{value_dict[self.value]}{suite_dict[self.suite][-1]}"
+
     @property
     def flipped(self) -> bool:
         return self._flipped
+    
     @flipped.setter
     def flipped(self, flipped : bool):
         self._flipped = flipped
+
     @property
     def value(self) -> int:
         return self._value
+
     @value.setter
     def value(self, value : int):
         self._value = value
+
     @property
     def suite(self) -> int:
         return self._suite
+
     @suite.setter
     def suite(self, suite : int):
         self._suite = suite
+
     def __str__(self):
         if Card.debug:
             return f"{str(value_dict[self.value])[:3]}{suite_dict[self.suite][0]}{'u' if self.flipped else 'd'}"
@@ -107,10 +119,13 @@ class Player(Sprite):
         self.shuffle()
         self.id = id
         self.deck = Deck()
+
     def shuffle(self):
         shuffle(self.cards)
+
     def set_cards(self):
         self.deck = Deck().distribute_player(self)
+
     def collect_cards(self, stack_collected):
         self.deck.sprite_group.empty()
         self.cards.extend(stack_collected)
@@ -170,8 +185,10 @@ class Deck():
             self.sprite_group.add(card)
         del player.cards[:]
         return self
+
     def normalize(self):
         pass
+
     def move(self,from_pile : int, to_pile : int) -> bool:
         if self.can_move(from_pile, to_pile):
             self.piles[to_pile].append(self.piles[from_pile].pop())
@@ -180,6 +197,7 @@ class Deck():
         if len(self.piles[from_pile]) != 0:
             self.piles[from_pile][-1].flip_up()
         return True
+
     def can_move(self,from_pile : int, to_pile : int) -> bool:
         if len(self.piles[from_pile]) == 0:
             return False
@@ -195,6 +213,7 @@ class Deck():
 
     def __str__(self):
         return self.str_table()
+
     def str_table(self):
         output = ""
         for i in range(0,5):
@@ -217,22 +236,25 @@ class Game():
         super(Game, self).__init__()
         self.create_cards()
         self.create_players()
+
     def create_cards(self):
         self.cards = []
         for i in range(4):
             for j in range(13):
                 self.cards.append(Card(j,i))
-                
+
     def create_players(self):
         if self.cards is None:
             raise RuntimeError("Cards not initialized.")
         self.player1 = Player(self.cards[0:26],1)
         self.player2 = Player(self.cards[26:52], 2)
+
     def init_round(self):
         self.pile1 = []
         self.pile2 = []
         self.player1.set_cards()
         self.player2.set_cards()
+
     def flip_cards(self) -> bool:
         if len(self.player1.cards) != 0:
             self.stacks[0].append(self.player1.cards.pop().flip_up())
@@ -257,10 +279,13 @@ class Game():
             or  from_card.value == stack_card.value - 1\
             or (from_card.value == 12 and stack_card.value == 0)\
             or (from_card.value == 0 and stack_card.value == 12)
+
     def __str__(self):
         return f"*\t{self.stacks[0][-1]}\t{self.stacks[1][-1]}\t*"
+
     def get_top_card(self, pile_no) -> Card:
         return None if len(self.stacks[pile_no]) == 0 else self.stacks[pile_no][-1]
+
     def get_top_cards(self) -> List[str]:
         return_list : List[str]= []
         for stack in self.stacks:
@@ -316,7 +341,7 @@ game = Game()
 
 user_input = ""
 ROUND_START = True
-while user_input!= "exit":
+while user_input.lower() != "exit":
     if ROUND_START:
         game.init_round()
         ROUND_START = False
