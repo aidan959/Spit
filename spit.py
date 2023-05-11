@@ -4,12 +4,11 @@ import constants
 
 from typing import List, Dict
 
-
 from random import shuffle, seed
-
+import numpy as np
 import pygame
 from pygame.locals import RLEACCEL, KEYDOWN, K_ESCAPE, K_SPACE, QUIT
-from pygame.sprite import Sprite
+from pygame.sprite import Sprite, Group
 from pygame import Surface, USEREVENT
 DEBUG = False
 
@@ -39,19 +38,26 @@ value_dict = {
 
 class Card(Sprite):
     debug = False
+    flipped_path = os.path.join(constants.PNG_CARD_DIRECTORY,'carddown.png')
     def __init__(self, value, suite):
         super(Card, self).__init__()
         # card value
         self.flipped = False
         self.value = value
         self.suite = suite
-
+        self.coord = (0, 0)
+        self.current_path = ""
         self.card_path = os.path.join(constants.PNG_CARD_DIRECTORY, f'card{suite}{value}.png')
         if not os.path.exists(self.card_path):
             print(f"card{suite}{value}.png not found")
             return
         print(f"Card {self.__str__()} found at {self.card_path}")
-        self.surf : pygame.Surface = pygame.image.load(self.card_path)
+        self.set_image(self.card_path)
+    def set_image(self, path):
+        if self.current_path == path:
+            return
+        self.current_path = path
+        self.surf : pygame.Surface = pygame.image.load(path)
         self.surf.set_colorkey((255, 255, 255))
         self.rect = self.surf.get_rect()
     @property
@@ -62,8 +68,10 @@ class Card(Sprite):
         self._surf = surf
     def flip_up(self):
         self.flipped = True
+        self.set_image(self.card_path)
         return self
     def flip_down(self):
+        self.set_image(Card.flipped_path)
         self.flipped = False
         return self
     def s(self) -> str:
@@ -104,6 +112,7 @@ class Player(Sprite):
     def set_cards(self):
         self.deck = Deck().distribute_player(self)
     def collect_cards(self, stack_collected):
+        self.deck.sprite_group.empty()
         self.cards.extend(stack_collected)
         self.cards.extend(self.deck.stock)
         del self.deck.stock[:]
@@ -112,6 +121,7 @@ class Player(Sprite):
             self.cards.extend(self.deck.piles[pile])
             del self.deck.piles[pile][:]
 class Deck():
+    scale = 0.05
     def __init__(self):
         self.piles : Dict[List[Card]] = {
             1 : [],
@@ -119,13 +129,22 @@ class Deck():
             3 : [],
             4 : [],
             5 : [],
-            6 : [] 
+            6 : []
         }
         self.stock = []
+        self.sprite_group = Group()
     def distribute_player(self, player : Player ):
+        self.sprite_group.empty()
         num_cards = 15 if len(player.cards) >= 15 else len(player.cards)
         tot_cards = 0
         exit_loop = False
+        base_pos = (0, 0)
+        if player.id == 1:
+            base_pos = (100,500)
+            direction = 1
+        elif player.id == 2:
+            base_pos = (1180, 220)
+            direction = -1
         for i in range(1,6):
             if exit_loop or tot_cards + 1 > num_cards:
                 break
@@ -134,12 +153,22 @@ class Deck():
                     exit_loop = True
                     break
                 if j == i-1:
-                    self.piles[i].append(player.cards.pop().flip_up())
+                    card = player.cards.pop().flip_up()
+                    card.coord = np.add(base_pos, (i*60 * direction,  j* 5 * direction ))
+                    self.piles[i].append(card)
+                    self.sprite_group.add(card)
                 else:
-                    self.piles[i].append(player.cards.pop().flip_down())
+                    card = player.cards.pop().flip_down()
+                    card.coord = np.add(base_pos,(i*60 * direction,  j* 5 * direction ))
+                    
+
+                    self.piles[i].append(card)
+                    self.sprite_group.add(card)
                 tot_cards += 1
         for card in player.cards:
-            self.stock.append(player.cards.pop())
+            self.stock.append(card)
+            self.sprite_group.add(card)
+        del player.cards[:]
         return self
     def normalize(self):
         pass
@@ -178,6 +207,7 @@ class Deck():
 class Game():
     player1 : Player = None
     player2 : Player = None
+    
     stacks = {
         0 : [],
         1 : []
@@ -192,6 +222,7 @@ class Game():
         for i in range(4):
             for j in range(13):
                 self.cards.append(Card(j,i))
+                
     def create_players(self):
         if self.cards is None:
             raise RuntimeError("Cards not initialized.")
@@ -204,14 +235,17 @@ class Game():
         self.player2.set_cards()
     def flip_cards(self) -> bool:
         if len(self.player1.cards) != 0:
-            self.stacks[0].append(self.player1.cards.pop())
+            self.stacks[0].append(self.player1.cards.pop().flip_up())
         if len(self.player2.cards) != 0:
-            self.stacks[1].append(self.player2.cards.pop())
+            self.stacks[1].append(self.player2.cards.pop().flip_up())
     def place_card(self, player : Player, from_pile : int, to_stack : int) -> bool:
         if self.can_place_card(player, from_pile, to_stack):
             self.stacks[to_stack].append(player.deck.piles[from_pile].pop())
-            return True
-        return False
+        else:
+            return False
+        if len(player.deck.piles[from_pile]) != 0:
+            player.deck.piles[from_pile].flip_up()
+        return True
     def can_place_card(self, player : Player, from_pile : int, to_stack : int) -> bool:
         if len(self.stacks[to_stack]) == 0:
             return False
@@ -239,16 +273,25 @@ class Game():
 NEWCARD = USEREVENT + 1
 Card.debug = True
 
-if __name__ == '__1main__':
+def print_round_info():
+    top_cards = game.get_top_cards()
+    print(f"\tPile1:\tPile2:\n\t  {top_cards[0]}\t  {top_cards[1]}")
+    print(f"Player1:\n{game.player1.deck.str_table()}")
+    print(f"Player2:\n{game.player2.deck.str_table()}")
+
+if __name__ == '__main__':
     pygame.init()
-    screen = pygame.display.set_mode([500, 500])
+    screen = pygame.display.set_mode((1280, 720))
     game = Game()
 
     clock = pygame.time.Clock()
     running = True
     counter = 0
-    
+    ROUND_START = True
     while running:
+        if ROUND_START:
+            game.init_round()
+            ROUND_START = False
         for event in pygame.event.get():
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
@@ -259,12 +302,10 @@ if __name__ == '__1main__':
                     entity = game.cards[counter]
             elif event.type == QUIT:
                 running = False
-        # for i in range(len(game.player1.deck.piles[5])):
-        #     card = game.player1.deck.piles[5][i]
-        #     screen.blit(card.surf,card.rect)
         screen.fill((255, 255, 255))
-        #for entity in cards:
-        #    screen.blit(entity.surf, entity.rect)
+        for entity in game.player1.deck.sprite_group:
+            entity.rect.center = entity.coord
+            screen.blit(entity.surf,  entity.rect)
         pygame.display.flip()
 
         clock.tick(60)
@@ -272,12 +313,6 @@ if __name__ == '__1main__':
 
 seed(12)
 game = Game()
-
-def print_round_info():
-    top_cards = game.get_top_cards()
-    print(f"\tPile1:\tPile2:\n\t  {top_cards[0]}\t  {top_cards[1]}")
-    print(f"Player1:\n{game.player1.deck.str_table()}")
-    print(f"Player2:\n{game.player2.deck.str_table()}")
 
 user_input = ""
 ROUND_START = True
